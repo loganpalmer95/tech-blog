@@ -33,8 +33,12 @@ app.use(session(sess));
 //use controllers
 app.use("/", controller);
 
+const helpers = require("./utils/helpers")
+
+const hbs = exphbs.create({ helpers })
+
 //set handlebars as render engine
-app.engine("handlebars", exphbs());
+app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 
 sequelize.sync({ force: false }).then(() => {
