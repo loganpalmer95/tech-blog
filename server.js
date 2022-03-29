@@ -1,46 +1,43 @@
-const express = require("express");
-const path = require("path");
-//paths
-const controller = require("./controllers");
-//handlebars
-const exphbs = require("express-handlebars");
-//Sequelize
-const sequelize = require("./config/connection");
-//Session
-const session = require("express-session");
-const SequlizeStore = require("connect-session-sequelize")(session.Store);
+const path = require('path');
+const express = require('express');
+const routes = require('./controllers');
+const sequelize = require('./config/connection');
+const helpers = require('./utils/helpers');
+const exphbs = require('express-handlebars');
+const hbs = exphbs.create({
+    helpers
+});
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
-//set up the actual session
 const sess = {
-  secret: "super secret secret",
-  cookie: {},
-  resave: false,
-  saveUninitialized: true,
-  store: new SequlizeStore({
-    db: sequelize,
-  }),
+    secret: "secret secret",
+    cookie: {},
+    resave: false,
+    saveUninitialized: true,
+    store: new SequelizeStore({
+        db: sequelize,
+        checkExpirationInterval: 1000 * 60 * 10, // will check every 10 minutes
+        expiration: 1000 * 60 * 30 // will expire after 30 minutes
+    })
 };
-//initialize the server
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-//middlewear
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
 app.use(session(sess));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({
+    extended: true
+}));
+app.use(routes);
 
-//use controllers
-app.use("/", controller);
+//sequelize.sync();
 
-const helpers = require("./utils/helpers")
-
-const hbs = exphbs.create({ helpers })
-
-//set handlebars as render engine
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
-
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log(`Now listening on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}!`);
 });

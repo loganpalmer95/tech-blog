@@ -1,13 +1,30 @@
-<div class="padding-20">
-    <form id="comment-form " class="padding-20">
-        <label for="post-title">New Post Title</label>
-        <input class="padding-20" type="textarea" name="post-title" id="post-title">
-        <label for="post-title">New Text</label>
-        <input class="padding-20" type="textarea" name="post-text" id="post-body">
-        <button class="padding-20" id="create-post-btn">Update!</button>
-    </form>
-</div>
-<link rel="stylesheet" href="/css/single-post.css">
-<script src="/js/update-post.js"></script>
-{{!--
-<script src="edit-delete-post.js"></script> --}}
+<a href="/dashboard" class="go-back"> &larr; Back to dashboard</a>
+
+<article class="new-page">
+    <section class="edit-form-page">
+        <div class="form-heading">
+            <h2>
+                Edit Post
+            </h2>
+        </div>
+        <div class="form-section">
+            <form class="edit-post-form">
+                <div class="post-title-section">
+                    <label for="post-title">Title</label>
+                    <input type="text" name="post-title" id="post-title" value="{{post.title}}" />
+                </div>
+                <div class="post-content">
+                    <label for="post-content">Content</label>
+                    <textarea class="entry-field" id="post-content" name="post-content">{{post.content}}</textarea>
+                </div>
+                <button type="submit">Update post</button>
+                <button type="button" class="delete-post-btn">Delete post</button>
+            </form>
+        </div>
+    </section>
+</article>
+
+{{#if loggedIn}}
+<script src="/javascript/edit-post.js"></script>
+<script src="/javascript/delete-post.js"></script>
+{{/if}}
